@@ -15,28 +15,19 @@ declare_id!("7cf2rrVt6RH5Duv9KFJFuaRxTh3LXxGJeMEeTPKG9gpT");
 pub mod anchor_escrow {
     use super::*;
 
-    pub fn initialize(ctx:Context<Make>,seed:u64,recieve_amount:u64) -> Result<()>{
-        ctx.accounts.init_escrow(seed, recieve_amount,&ctx.bumps)?;
-        Ok(())
-    }
-
-    pub fn deposit(ctx:Context<Make>,deposit:u64)->Result<()>{
+    pub fn make(ctx: Context<Make>, seed: u64, deposit: u64, receive: u64) -> Result<()> {
         ctx.accounts.deposit(deposit)?;
-        Ok(())
+        ctx.accounts.init_escrow(seed, receive, &ctx.bumps)
     }
 
-    pub fn send_to_vault(ctx:Context<Take>) -> Result<()>{
-        ctx.accounts.send_to_vault()?;
-        Ok(())
+    pub fn refund(ctx: Context<Refund>) -> Result<()> {
+        ctx.accounts.refund_and_close_vault()
     }
 
-    pub fn withdraw_and_close(ctx:Context<Take>) ->Result<()> {
-        ctx.accounts.withdraw_and_close()?;
-        Ok(())
+    pub fn take(ctx: Context<Take>) -> Result<()> {
+        ctx.accounts.deposit()?;
+        ctx.accounts.withdraw_and_close_vault()
     }
 
-    pub fn refund_and_close(ctx:Context<Refund>) -> Result<()>{
-        ctx.accounts.refund_and_close()?;
-        Ok(())
-    }
+
 }
